@@ -2,10 +2,10 @@ import re
 from urllib.parse import urlparse
 
 
-def analyze_url(url: str) -> int:
+def analyze_url(url: str) -> list:
     """Analyze the given URL for potential phishing indicators.
 
-    This function computes a risk score based on several heuristics:
+    This function computes a list of indicators based on several heuristics:
     - URL length exceeding 75 characters.
     - Use of IP address instead of domain name.
     - Excessive number of subdomains (more than 3 dots).
@@ -18,24 +18,27 @@ def analyze_url(url: str) -> int:
 
     Returns
     -------
-    int
-        A numeric score indicating the level of suspicion (higher is riskier).
+    list
+        A list of strings describing the potential phishing indicators found.
     """
-    score = 0
+
+    indicators = []
 
     # penalize URLs longer than 75 characters as they may hide malicious content
     if len(url) > 75:
-        score += 1
+        indicators.append("URL length is unusually long ({} characters)".format(len(url)))
 
     # check for IP address usage, which is uncommon for legitimate sites
     ip_pattern = r"(http|https)://\d+\.\d+\.\d+\.\d+"
     if re.match(ip_pattern, url):
-        score += 2
+        indicators.append("URL uses IP address instead of domain name")
+
+    #return indicators
 
     # count subdomains; too many may indicate obfuscation
     domain = urlparse(url).netloc
     if domain.count('.') > 3:
-        score += 1
+        indicators.append("URL has excessive number of subdomains ({} dots)".format(domain.count('.')))
 
     # list of keywords often associated with phishing attempts
     suspicious_keywords = [
@@ -51,29 +54,29 @@ def analyze_url(url: str) -> int:
         'security'
     ]
 
-    # increment score if any suspicious keyword is found
+    # increment indicators if any suspicious keyword is found
     for keyword in suspicious_keywords:
         if keyword in url.lower():
-            score += 1
+            indicators.append(f"URL contains suspicious keyword: '{keyword}'")
             break  # stop after first match to avoid over-penalizing
 
-    return score
+    return indicators
 
 
-def classify(score: int) -> str:
-    """Classify the URL based on the computed score.
+def classify(indicators: list) -> str:
+    """Classify the URL based on the computed indicators.
 
     Parameters
     ----------
-    score : int
-        The risk score from analyze_url.
+    indicators : list
+        A list of strings describing the potential phishing indicators found.
 
     Returns
     -------
     str
         A classification string: "Possibly phishing" or "Possibly legitimate".
     """
-    if score >= 3:
+    if  len(indicators) >= 3:
         return "Possibly phishing"
     else:
         return "Possibly legitimate"
@@ -82,8 +85,7 @@ def classify(score: int) -> str:
 # example usage: prompt user for a URL and display analysis
 if __name__ == "__main__":
     url = input("Enter a URL to analyze: ")
-    score = analyze_url(url)
-    classification = classify(score)
+    indicators = analyze_url(url)
+    classification = classify(indicators)
     print(f"URL: {url}")
-    print(f"Score: {score}")
     print(f"Classification: {classification}")
