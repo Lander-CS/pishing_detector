@@ -20,7 +20,7 @@ def check_forms(soup):
             if i.get("type") == "password":
                 indicators.append("Form with password field found")
     return indicators
-def check_external_formn_action(soup, domain):
+def check_external_form_action(soup, domain):
     indicators = []
     forms = soup.find_all('form')
     
@@ -60,4 +60,15 @@ def check_suspicious_keywords(html):
             indicators.append(f"Suspicious keyword found: {keyword}")
     return indicators
 
-
+def analyze_html(url):
+    indicators = []
+    html = get_html(url)
+    if not html:
+        return ["Failed to retrieve HTML content"]
+    soup = BeautifulSoup(html, 'html.parser')
+    domain = urlparse(url).netloc
+    indicators.extend(check_forms(soup))
+    indicators.extend(check_external_form_action(soup, domain))
+    indicators.extend(check_iframes(soup))
+    indicators.extend(check_suspicious_keywords(html))
+    return indicators
