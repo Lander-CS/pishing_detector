@@ -21,8 +21,8 @@ Indicators:
 [!] Long URL
 
 ## Technologies Used
--Python
+- Python
 
--Regex (Regular Expressions)
+- Regex (Regular Expressions)
 
--URL parsing
+- URL parsing
