@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phishing Detector Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <h1>Phishing Detector</h1>
+        <p>Analyze URLs for phishing indicators in real time.</p>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="card">
+        <h2>Analyze a URL</h2>
+        <form id="analyze-form" class="form">
+          <label for="url-input">URL to analyze</label>
+          <div class="form-row">
+            <input
+              id="url-input"
+              name="url"
+              type="url"
+              placeholder="https://example.com/login"
+              required
+            />
+            <button type="submit" id="analyze-button">Analyze</button>
+          </div>
+          <p id="form-error" class="form-error" hidden></p>
+        </form>
+
+        <div id="result" class="result" hidden>
+          <div class="result-header">
+            <div>
+              <h3>Latest analysis</h3>
+              <p id="result-url" class="result-url"></p>
+            </div>
+            <div class="badge" id="risk-badge">
+              <span id="risk-score"></span>
+              <span id="risk-level"></span>
+            </div>
+          </div>
+          <div class="indicators">
+            <h4>Indicators</h4>
+            <ul id="indicators-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="history-header">
+          <h2>Recent analyses</h2>
+          <button id="refresh-history" class="ghost-button">Refresh</button>
+        </div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>URL</th>
+              <th>Risk</th>
+              <th>Level</th>
+              <th>When</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', path='app.js') }}"></script>
+  </body>
+</html>
+

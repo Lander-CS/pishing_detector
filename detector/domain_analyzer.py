@@ -2,6 +2,8 @@ from urllib.parse import urlparse
 import whois
 from datetime import datetime
 
+from .models import Indicator, IndicatorCategory, Severity
+
 
 # threshold for considering a domain suspiciously young (in days)
 SUSPICIOUS_DOMAIN_AGE_DAYS = 180
@@ -49,47 +51,111 @@ def calculate_domain_age(domain_info: object) -> int | None:
     return age
 
 
-def analyze_domain(url: str) -> list[str]:
+def analyze_domain_indicators(url: str) -> list[Indicator]:
     """Analyze the domain for potential phishing indicators.
 
     Checks various attributes like age, registrar, name servers, and TLD.
-    Returns a list of indicator messages.
+    Returns a list of structured indicators.
     """
-    indicators = []
+    indicators: list[Indicator] = []
     domain = extract_domain(url)
     info = get_domain_info(domain)
 
     if not info:
-        indicators.append("Domain info not found")
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.DOMAIN_MISSING,
+                message="Domain info not found",
+                severity=Severity.HIGH,
+            )
+        )
         return indicators
 
     age = calculate_domain_age(info)
 
     # check domain age
     if age is not None and age < SUSPICIOUS_DOMAIN_AGE_DAYS:
-        indicators.append(f"Domain age is {age} days, which is suspiciously young")
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.DOMAIN_METADATA,
+                message=f"Domain age is {age} days, which is suspiciously young",
+                severity=Severity.MEDIUM,
+            )
+        )
     elif age is not None and age > SUSPICIOUS_DOMAIN_AGE_DAYS:
-        indicators.append(f"Domain age is {age} days, which is relatively old")
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.DOMAIN_METADATA,
+                message=f"Domain age is {age} days, which is relatively old",
+                severity=Severity.LOW,
+            )
+        )
 
     # check registrar
     if not info.registrar:
-        indicators.append("No registrar information found")
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.DOMAIN_METADATA,
+                message="No registrar information found",
+                severity=Severity.MEDIUM,
+            )
+        )
 
     # check name servers
     if info.name_servers:
-        indicators.append(f"Domain has {len(info.name_servers)} name servers")
-        if len(info.name_servers) < 2:
-            indicators.append("Domain has less than 2 name servers, which is suspicious")
+        count = len(info.name_servers)
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.DOMAIN_METADATA,
+                message=f"Domain has {count} name servers",
+                severity=Severity.LOW,
+            )
+        )
+        if count < 2:
+            indicators.append(
+                Indicator(
+                    category=IndicatorCategory.DOMAIN_METADATA,
+                    message="Domain has less than 2 name servers, which is suspicious",
+                    severity=Severity.MEDIUM,
+                )
+            )
         # check for suspicious name server patterns
-        suspicious_ns = ['cheap', '.ru', '.cn', '.tk']
-        if any(ns in suspicious_ns for ns in info.name_servers):
-            indicators.append("Domain has an unusual name server configuration")
+        suspicious_ns = ["cheap", ".ru", ".cn", ".tk"]
+        if any(ns for ns in info.name_servers if any(bad in str(ns).lower() for bad in suspicious_ns)):
+            indicators.append(
+                Indicator(
+                    category=IndicatorCategory.DOMAIN_METADATA,
+                    message="Domain has an unusual name server configuration",
+                    severity=Severity.MEDIUM,
+                )
+            )
 
     # check TLD
     if info.tld:
-        indicators.append(f"Domain TLD is {info.tld}")
-        suspicious_tlds = ['xyz', 'top', 'club', 'online', 'site']
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.DOMAIN_METADATA,
+                message=f"Domain TLD is {info.tld}",
+                severity=Severity.LOW,
+            )
+        )
+        suspicious_tlds = ["xyz", "top", "club", "online", "site"]
         if info.tld in suspicious_tlds:
-            indicators.append(f"Domain uses a less common TLD: {info.tld}, possibly phishing")
+            indicators.append(
+                Indicator(
+                    category=IndicatorCategory.DOMAIN_METADATA,
+                    message=f"Domain uses a less common TLD: {info.tld}, possibly phishing",
+                    severity=Severity.MEDIUM,
+                )
+            )
 
     return indicators
+
+
+def analyze_domain(url: str) -> list[str]:
+    """
+    Backwards-compatible wrapper returning only indicator messages.
+
+    Prefer usar analyze_domain_indicators para obter objetos estruturados.
+    """
+    return [indicator.message for indicator in analyze_domain_indicators(url)]

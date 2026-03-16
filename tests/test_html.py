@@ -1,8 +1,7 @@
 from detector.html_analyzer import analyze_html
 
-url = "https://example.com"
 
-result = analyze_html(url)
-
-for r in result:
-    print("[!]", r)
+def test_analyze_html_returns_list():
+    url = "https://example.com"
+    result = analyze_html(url)
+    assert isinstance(result, list)

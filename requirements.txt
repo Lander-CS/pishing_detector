@@ -2,3 +2,6 @@ requests
 beautifulsoup4
 python-Levenshtein
 python-whois
+fastapi
+uvicorn
+pydantic

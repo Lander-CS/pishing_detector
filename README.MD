@@ -45,16 +45,34 @@ Analysis complete, total indicators found: 3
 
 Risk level: 7/10
 ## Project Structure
-```phishing-detector
+```text
+phishing-detector
 │
-├ detectors
+├ detector
 │  ├ url_analyzer.py
 │  ├ domain_analyzer.py
 │  ├ html_analyzer.py
-│  └ typosquatting.py
+│  ├ typosquat_detector.py
+│  ├ models.py
+│  └ service.py
+│
+├ api
+│  ├ app.py
+│  ├ storage.py
+│  ├ validators.py
+│  ├ templates/
+│  │   └ index.html
+│  └ static/
+│      ├ styles.css
+│      └ app.js
 │
 ├ cli
 │  └ main.py
+│
+├ tests
+│  ├ test_domain.py
+│  ├ test_html.py
+│  └ test_url.py
 │
 ├ README.md
 └ requirements.txt
@@ -73,10 +91,34 @@ Install dependencies
 pip install -r requirements.txt
 ```
 ## Usage
-Run the detector from the command line
-`python -m cli.main <url>`
-Example:
-`python -m cli.main https://paypal-login-security.xyz`
+
+### CLI
+
+Run the detector from the command line:
+
+```bash
+python -m cli.main https://paypal-login-security.xyz
+```
+
+### Web API and dashboard
+
+Start the FastAPI server with uvicorn:
+
+```bash
+uvicorn api.app:app --reload
+```
+
+Then open the dashboard in your browser:
+
+```text
+http://127.0.0.1:8000/
+```
+
+The dashboard lets you:
+
+- Submit URLs for analysis.
+- See risk score and detailed indicators.
+- Browse a history of recent analyses stored locally in SQLite.
 
 
 ## Risk Score

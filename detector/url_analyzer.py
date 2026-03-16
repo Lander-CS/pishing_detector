@@ -1,8 +1,10 @@
 import re
 from urllib.parse import urlparse
 
+from .models import Indicator, IndicatorCategory, Severity
 
-def analyze_url(url: str) -> list:
+
+def analyze_url_indicators(url: str) -> list[Indicator]:
     """Analyze the given URL for potential phishing indicators.
 
     This function computes a list of indicators based on several heuristics:
@@ -18,49 +20,84 @@ def analyze_url(url: str) -> list:
 
     Returns
     -------
-    list
-        A list of strings describing the potential phishing indicators found.
+    list[Indicator]
+        A list of structured indicators describing the potential phishing indicators found.
     """
 
-    indicators = []
+    indicators: list[Indicator] = []
 
     # penalize URLs longer than 75 characters as they may hide malicious content
     if len(url) > 75:
-        indicators.append("URL length is unusually long ({} characters)".format(len(url)))
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.URL_STRUCTURE,
+                message="URL length is unusually long ({} characters)".format(len(url)),
+                severity=Severity.MEDIUM,
+            )
+        )
 
     # check for IP address usage, which is uncommon for legitimate sites
     ip_pattern = r"(http|https)://\d+\.\d+\.\d+\.\d+"
     if re.match(ip_pattern, url):
-        indicators.append("URL uses IP address instead of domain name")
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.URL_STRUCTURE,
+                message="URL uses IP address instead of domain name",
+                severity=Severity.MEDIUM,
+            )
+        )
 
     #return indicators
 
     # count subdomains; too many may indicate obfuscation
     domain = urlparse(url).netloc
-    if domain.count('.') > 3:
-        indicators.append("URL has excessive number of subdomains ({} dots)".format(domain.count('.')))
+    if domain.count(".") > 3:
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.URL_STRUCTURE,
+                message="URL has excessive number of subdomains ({} dots)".format(
+                    domain.count(".")
+                ),
+                severity=Severity.MEDIUM,
+            )
+        )
 
     # list of keywords often associated with phishing attempts
     suspicious_keywords = [
-        'login',
-        'secure',
-        'account',
-        'update',
-        'free',
-        'verify',
-        'password',
-        'bank',
-        'confirm',
-        'security'
+        "login",
+        "secure",
+        "account",
+        "update",
+        "free",
+        "verify",
+        "password",
+        "bank",
+        "confirm",
+        "security",
     ]
 
     # increment indicators if any suspicious keyword is found
     for keyword in suspicious_keywords:
         if keyword in url.lower():
-            indicators.append(f"URL contains suspicious keyword: '{keyword}'")
+            indicators.append(
+                Indicator(
+                    category=IndicatorCategory.URL_KEYWORD,
+                    message=f"URL contains suspicious keyword: '{keyword}'",
+                    severity=Severity.MEDIUM,
+                )
+            )
             break  # stop after first match to avoid over-penalizing
 
     return indicators
+
+
+def analyze_url(url: str) -> list[str]:
+    """
+    Backwards-compatible wrapper returning only indicator messages.
+
+    Prefer usar analyze_url_indicators para obter objetos estruturados.
+    """
+    return [indicator.message for indicator in analyze_url_indicators(url)]
 
 
 def classify(indicators: list) -> str:

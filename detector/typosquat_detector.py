@@ -1,6 +1,8 @@
 from urllib.parse import urlparse
 import Levenshtein
 
+from .models import Indicator, IndicatorCategory, Severity
+
 
 TARGET_DOMAINS = [
     "google.com",
@@ -92,25 +94,49 @@ def contains_brand(domain):
     return indicators
 
 
-def detect_typosquatting(url: str):
+def detect_typosquatting_indicators(url: str) -> list[Indicator]:
 
     domain = extract_domain(url)
 
-    indicators = []
+    indicators: list[Indicator] = []
 
     closest, distance = find_closest_domain(domain, TARGET_DOMAINS)
 
     if closest and distance <= 3 and domain != closest:
 
         indicators.append(
-            f"Domain '{domain}' similar to '{closest}' (distance {distance})"
+            Indicator(
+                category=IndicatorCategory.TYPOSQUAT,
+                message=f"Domain '{domain}' similar to '{closest}' (distance {distance})",
+                severity=Severity.HIGH,
+            )
         )
 
     brand_hits = contains_brand(domain)
 
-    indicators.extend(brand_hits)
+    for msg in brand_hits:
+        indicators.append(
+            Indicator(
+                category=IndicatorCategory.BRAND,
+                message=msg,
+                severity=Severity.HIGH,
+            )
+        )
+
+    return indicators
+
+
+def detect_typosquatting(url: str):
+
+    """
+    Versão compatível que mantém o retorno antigo baseado em dicionário.
+
+    Prefer usar detect_typosquatting_indicators quando quiser objetos estruturados.
+    """
+
+    indicators = [i.message for i in detect_typosquatting_indicators(url)]
 
     return {
         "suspicious": len(indicators) > 0,
-        "indicators": indicators
+        "indicators": indicators,
     }

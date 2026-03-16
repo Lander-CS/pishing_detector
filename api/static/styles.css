@@ -1,0 +1,273 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+}
+
+.header {
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+  background: linear-gradient(90deg, #0f172a, #1f2937);
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.header p {
+  margin: 0.25rem 0 0;
+  color: #9ca3af;
+}
+
+.main {
+  max-width: 960px;
+  margin: 2rem auto;
+  padding: 0 1rem 2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(75, 85, 99, 0.6);
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form label {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form-row input[type="url"] {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.form-row input[type="url"]:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+button {
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: #f9fafb;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.ghost-button {
+  background: transparent;
+  border: 1px solid #4b5563;
+  color: #e5e7eb;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.form-error {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #fecaca;
+}
+
+.result {
+  margin-top: 1.25rem;
+  border-top: 1px solid rgba(55, 65, 81, 0.8);
+  padding-top: 1rem;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.result-url {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+  word-break: break-all;
+}
+
+.badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  min-width: 6rem;
+}
+
+.badge-low {
+  background: rgba(22, 163, 74, 0.15);
+  color: #bbf7d0;
+}
+
+.badge-medium {
+  background: rgba(234, 179, 8, 0.15);
+  color: #facc15;
+}
+
+.badge-high {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fecaca;
+}
+
+.badge-critical {
+  background: rgba(185, 28, 28, 0.2);
+  color: #fee2e2;
+}
+
+.indicators h4 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.indicators ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.indicators li {
+  font-size: 0.9rem;
+  padding: 0.35rem 0.25rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+}
+
+.indicators li:last-child {
+  border-bottom: none;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.history-table th,
+.history-table td {
+  padding: 0.4rem 0.35rem;
+  text-align: left;
+}
+
+.history-table thead {
+  border-bottom: 1px solid rgba(55, 65, 81, 0.7);
+  color: #9ca3af;
+}
+
+.history-table tbody tr:nth-child(odd) {
+  background: rgba(17, 24, 39, 0.8);
+}
+
+.history-table tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+.history-table td:nth-child(1) {
+  max-width: 340px;
+  word-break: break-all;
+}
+
+.pill {
+  display: inline-flex;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.pill-low {
+  background: rgba(22, 163, 74, 0.2);
+  color: #bbf7d0;
+}
+
+.pill-medium {
+  background: rgba(234, 179, 8, 0.2);
+  color: #facc15;
+}
+
+.pill-high {
+  background: rgba(248, 113, 113, 0.25);
+  color: #fecaca;
+}
+
+.pill-critical {
+  background: rgba(185, 28, 28, 0.3);
+  color: #fee2e2;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .badge {
+    align-self: stretch;
+    align-items: center;
+  }
+}
+
