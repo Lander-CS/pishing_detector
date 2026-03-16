@@ -51,7 +51,7 @@ def save_analysis(result: AnalysisResult) -> int:
                 int(result.risk_score),
                 result.risk_level.value,
                 result.created_at.isoformat(),
-                json.dumps(result.dict()),
+                result.model_dump_json()
             ),
         )
         conn.commit()
