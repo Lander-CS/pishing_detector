@@ -5,3 +5,4 @@ python-whois
 fastapi
 uvicorn
 pydantic
+jinja2
