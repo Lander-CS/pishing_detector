@@ -5,7 +5,7 @@ from typing import Iterable, List
 
 from pydantic import HttpUrl
 
-from .domain_analyzer import analyze_domain
+from .domain_analyzer import analyze_domain_indicators
 from .html_analyzer import analyze_html
 from .url_analyzer import analyze_url
 from .typosquat_detector import detect_typosquatting_indicators
@@ -61,7 +61,7 @@ def analyze(url: str | HttpUrl) -> AnalysisResult:
     indicators.extend(analyze_url(url_str))
 
     # Domain analysis
-    indicators.extend(analyze_domain(url_str))
+    indicators.extend(analyze_domain_indicators(url_str))
 
     # HTML analysis
     indicators.extend(analyze_html(url_str))
